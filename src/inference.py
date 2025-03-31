@@ -2,11 +2,12 @@ import cv2
 import supervision as sv
 from ultralytics import YOLO
 import numpy as np
+import os
+
+model_path = os.path.join(os.path.dirname(__file__), 'best.pt')
+model_loaded = YOLO(model_path)
 
 def predict(image):
-    # Load the custom model
-    model_loaded = YOLO('best.pt')
-
     # Read the image from the file
     image_bytes = np.frombuffer(image.read(), np.uint8)
     image = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
