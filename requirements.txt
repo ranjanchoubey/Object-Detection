@@ -1,0 +1,7 @@
+flask-cors
+opencv-python
+Python-IO
+jsons
+supervision
+ultralytics
+numpy

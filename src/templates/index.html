@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #3f51b5;
+            margin-top: 50px;
+            font-size: 2rem;
+        }
+        .container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #imageInput {
+            padding: 8px;
+            margin-top: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #3f51b5;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #303f9f;
+        }
+        .image-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 40px;
+        }
+        .image-container {
+            width: 400px;
+            height: 400px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .placeholder {
+            color: #888;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Prediction</h1>
+    <div class="container">
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="predictImage()">Predict</button>
+    </div>
+
+    <div class="image-wrapper">
+        <div>
+            <h2>Original Image</h2>
+            <div class="image-container">
+                <img id="originalImage" src="https://via.placeholder.com/400x400?text=Original+Image" alt="Original Image">
+            </div>
+        </div>
+        <div>
+            <h2>Predicted Image</h2>
+            <div class="image-container">
+                <img id="predictedImage" src="https://via.placeholder.com/400x400?text=Predicted+Image" alt="Predicted Image">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function predictImage() {
+            const input = document.getElementById('imageInput');
+            if (!input.files[0]) {
+                alert("Please select an image first!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", input.files[0]);
+
+            document.getElementById('originalImage').src = URL.createObjectURL(input.files[0]);
+
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw new Error("Failed to predict");
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                document.getElementById('predictedImage').src = url;
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Error during prediction.");
+            });
+        }
+    </script>
+</body>
+</html>
